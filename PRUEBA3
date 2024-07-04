@@ -1,0 +1,103 @@
+import random, csv
+
+zonas_reparto = ["CONCEPCION", "CHIGUAYANTE", "TALCAHUANO", "HUALPEN", "SAN PEDRO"]
+lista_pedidos = []
+id_pedidos = []
+
+def id_pedido():
+    return random.randint(1000, 9999)
+
+def menu():
+    print("---- MENU ----")
+    print("1. Registrar pedido")
+    print("2. Listar los todos los pedidos")
+    print("3. Imprimir hoja de ruta")
+    print("4. Buscar un pedido por ID")
+    print("5. Salir del programa")
+
+def registrar_pedido():
+    print("---- REGISTRO DE PEDIDO ----")
+    print("Ingrese los siguientes datos del cliente: ")
+    codigo = id_pedido()
+    id_pedidos.append(codigo)
+    nombre = input("Nombre: ")
+    while nombre.isalpha() == False or nombre == "":
+        print("Campo obligatorio, ingrese nombre valido...")
+        nombre = input("Nombre: ")
+
+    apellido = input("Apellido: ")
+    while apellido.isalpha() == False or apellido == "":
+        print("Campo obligatorio, ingrese apellido valido...")
+        apellido = input("Apellido: ")
+    direccion = input("Direccion: ")
+    while direccion == "":
+        print("CAMPO OBLIGATORIO...")
+        direccion = input("Direccion: ")
+    comuna = input("Comuna: ")
+    while comuna.upper() not in zonas_reparto:
+        print("Comuna ingresada, no registrada para repartos...")
+        comuna = input("Comuna: ")
+
+    disp_6l = int(input("Disp. 6Lts: "))
+    disp_10l = int(input("Disp. 10Lts: "))
+    disp_20l = int(input("Disp. 20 Lts: "))
+    total_litros= disp_6l + disp_10l + disp_20l
+
+    if total_litros > 0:
+        lista_pedidos.append([codigo, nombre, apellido, direccion, comuna, disp_6l, disp_10l, disp_20l])
+        print("\nPEDIDO REGISTRADO!!")
+    else:
+        print("La cantidad de Litros debe ser mayor a 0...")
+
+def listar_pedidos():
+    print("---- PEDIDOS ----")
+    print("ID PEDIDO\tNOMBRE\tAPELLIDO\tDIRECCION\tSECTOR\tDISP.6LTS\tDISP.10LTS\tdisp.20lts")
+    for pedido in lista_pedidos:
+        print(f"{pedido[0]}\t{pedido[1]}\t{pedido[2]}\t{pedido[3]}\t{pedido[4]}\t{pedido[5]}\t{pedido[6]}\t{pedido[7]}")
+
+def imprimir_ruta():
+    print(zonas_reparto)
+    reparto = input("Ingrese sector: ")
+    for pedido in lista_pedidos:
+        with open("hoja_ruta.csv", "w", newline="") as archivo:
+            escritor = csv.writer(archivo)
+            escritor.writerow(["Codigo", "Nombre", "Apellido", "Direccion", "Comuna", "Disp_6l", "Disp_10l", "Disp_20l"])
+            if pedido[4] == reparto.upper():
+                escritor.writerows(lista_pedidos)
+                
+    print("Hoja de ruta creada con exito!!!")
+
+def buscar_por_id():
+    print(id_pedidos)
+    buscar= int(input("Ingrese ID: "))
+    if buscar in id_pedidos:
+        for pedido in lista_pedidos:
+            if pedido[0] == buscar:
+                print("---- DETALLE PEDIDO ----")
+                print("ID PEDIDO\tNOMBRE\tAPELLIDO\tDIRECCION\tSECTOR\tDISP.6LTS\tDISP.10LTS\tdisp.20lts")
+                print(f"{pedido[0]}\t{pedido[1]}\t{pedido[2]}\t{pedido[3]}\t{pedido[4]}\t{pedido[5]}\t{pedido[6]}\t{pedido[7]}")
+            
+
+while True:
+    menu()
+    opc_menu= input("Seleccione una opcion: ")
+    while opc_menu == "":
+        opc_menu= input("Seleccione una opcion: ")
+
+    if opc_menu == "1":
+        registrar_pedido()
+
+    elif opc_menu == "2":
+        listar_pedidos()
+
+    elif opc_menu == "3":
+        imprimir_ruta()
+
+    elif opc_menu == "4":
+        buscar_por_id()
+
+    elif opc_menu == "5":
+        break
+
+    else:
+        print("La opcion ingresada no es valida...")
